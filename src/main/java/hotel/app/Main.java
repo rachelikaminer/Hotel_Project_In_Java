@@ -1,44 +1,43 @@
 package hotel.app;
 
 import hotel.manager.Hotel;
-import hotel.storage.HotelStorage;
+import hotel.storage.DatabaseStorage;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
-    private static final Path DATA_FILE = Path.of("hotel-data.dat");
+    // הקובץ hotel-db.mv.db ייווצר בתיקיית הפרויקט
+    private static final String DB_URL = "jdbc:h2:./hotel-db";
 
     public static void main(String[] args) {
-        Hotel hotel = loadOrCreate();
+        DatabaseStorage storage = new DatabaseStorage(DB_URL);
+        Hotel hotel = loadOrCreate(storage);
         try {
             new ConsoleMenu(hotel, new Scanner(System.in), System.out).run();
         } catch (ConsoleMenu.InputClosedException e) {
             System.out.println();
         }
-        save(hotel);
+        save(storage, hotel);
     }
 
-    private static Hotel loadOrCreate() {
-        if (Files.exists(DATA_FILE)) {
-            try {
-                Hotel hotel = HotelStorage.load(DATA_FILE);
-                System.out.println("הנתונים נטענו מהקובץ " + DATA_FILE);
-                return hotel;
-            } catch (IOException e) {
-                System.out.println("לא ניתן לטעון את הנתונים (" + e.getMessage() + "), נטענים נתוני דמה.");
+    private static Hotel loadOrCreate(DatabaseStorage storage) {
+        try {
+            if (storage.hasData()) {
+                System.out.println("הנתונים נטענו ממסד הנתונים.");
+                return storage.load();
             }
+        } catch (SQLException e) {
+            System.out.println("לא ניתן לטעון את הנתונים (" + e.getMessage() + "), נטענים נתוני דמה.");
         }
         return SampleData.createHotel();
     }
 
-    private static void save(Hotel hotel) {
+    private static void save(DatabaseStorage storage, Hotel hotel) {
         try {
-            HotelStorage.save(hotel, DATA_FILE);
+            storage.save(hotel);
             System.out.println("הנתונים נשמרו. להתראות!");
-        } catch (IOException e) {
+        } catch (SQLException e) {
             System.out.println("שגיאה בשמירת הנתונים: " + e.getMessage());
         }
     }

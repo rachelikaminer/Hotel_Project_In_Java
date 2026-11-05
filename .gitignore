@@ -20,3 +20,6 @@ Thumbs.db
 # Runtime data and reports
 hotel-data.dat
 orders-report.txt
+# H2 database files
+*.mv.db
+*.trace.db

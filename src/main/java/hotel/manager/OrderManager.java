@@ -30,6 +30,22 @@ public class OrderManager implements Serializable {
         return order;
     }
 
+    /** מחזיר הזמנה קיימת, למשל בטעינה ממסד הנתונים, בלי לתת לה מספר חדש. */
+    public void restoreOrder(Order order) {
+        if (findByNumber(order.getOrderNumber()).isPresent()) {
+            throw new IllegalArgumentException("הזמנה " + order.getOrderNumber() + " כבר קיימת");
+        }
+        orders.add(order);
+        lastOrderNumber = Math.max(lastOrderNumber, order.getOrderNumber());
+    }
+
+    public int getLastOrderNumber() {
+        return lastOrderNumber;
+    }
+
+    public void restoreLastOrderNumber(int lastOrderNumber) {
+        this.lastOrderNumber = Math.max(this.lastOrderNumber, lastOrderNumber);
+    }
     public Optional<Order> findByNumber(int orderNumber) {
         return orders.stream().filter(o -> o.getOrderNumber() == orderNumber).findFirst();
     }

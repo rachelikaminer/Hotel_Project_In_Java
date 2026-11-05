@@ -23,6 +23,12 @@ public class Guest extends Person {
         numVisits++;
     }
 
+    public void setNumVisits(int numVisits) {
+        if (numVisits < 0) {
+            throw new IllegalArgumentException("מספר ביקורים לא יכול להיות שלילי");
+        }
+        this.numVisits = numVisits;
+    }
     /** אחוז ההנחה שהלקוח מקבל. ללקוח רגיל אין הנחה. */
     public double getDiscountPercent() {
         return 0;

@@ -1,0 +1,22 @@
+# Compiled class files
+*.class
+out/
+bin/
+target/
+build/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Runtime data and reports
+hotel-data.dat
+orders-report.txt
